@@ -6,4 +6,4 @@ client-files = [ "client/*" ]
 
 # server
 type = 'rs'
-main = 'server/release/resource.dll'
+main = 'server/debug/resource.dll'

@@ -1,8 +1,7 @@
 pub mod terminal;
 pub mod config;
+
 use chrono::prelude::*;
-use std::collections::HashMap;
-use std::hash::Hash;
 
 // CODE
 
@@ -27,79 +26,9 @@ impl Utils {
 
         _time_str
     }
-}
 
-pub struct CustomPool<Key, Value> where Key: Eq + Hash, {
-    name: String,
-    list: HashMap<Key, Value>,
-}
-
-impl<Key, Value> CustomPool<Key, Value> where Key: Eq + Hash, {
-    pub fn new(name:String) -> Self {
-        Self {
-            name,
-            list: HashMap::new(),
-        }
-    }
-
-    fn get(&self, key:&Key) -> Option<&Value> {
-        self.list.get(key)
-    }
-
-    fn has(&self, key:&Key) -> bool {
-        self.list.contains_key(key)
-    }
-
-    fn add(&mut self, key:Key, value:Value) {
-        if !self.has(&key) {
-            self.list.insert(key, value);
-        }
-    }
-
-    fn remove(&mut self, key:&Key) {
-        self.list.remove(key);
-    }
-
-    pub fn name(&self) -> &String {
-        &self.name
-    }
-
-    pub fn length(&self) -> usize {
-        self.list.len()
-    }
-
-    pub fn get_list(&self) -> &HashMap<Key, Value> {
-        &self.list
-    }
-
-    pub fn get_next_id(&self) -> usize {
-        self.length() + 1
-    }
-
-    pub fn add_public(&mut self, key:Key, value:Value) {
-        self.add(key, value);
-    }
-
-    pub fn get_public(&self, key:&Key) -> Option<&Value> {
-        self.get(key)
-    }
-
-    pub fn has_public(&self, key:&Key) -> bool {
-        self.has(key)
-    }
-
-    pub fn remove_public(&mut self, key:&Key) {
-        self.remove(key);
-    }
-
-    pub fn update_key_value(&mut self, key:Key, value:Value) {
-        if self.has(&key) {
-            self.remove(&key);
-            self.add(key, value);
-        }
-    }
-
-    pub fn clear(&mut self) {
-        self.list.clear();
+    pub fn get_normalize_ip(ip:&str) -> String {
+        let _local_result = ip.replace("::ffff:", "");
+        _local_result
     }
 }

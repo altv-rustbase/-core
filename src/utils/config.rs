@@ -15,7 +15,7 @@ pub struct MainConfig {
 }
 
 #[derive(Deserialize)]
-struct DataBaseConfig {
+pub struct DataBaseConfig {
     pub is_debug:bool,
     pub host:String,
     pub username:String,

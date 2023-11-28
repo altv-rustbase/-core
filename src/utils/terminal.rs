@@ -4,7 +4,7 @@ use crate::utils::Utils;
 // CODE
 
 #[allow(non_upper_case_globals)]
-const color_gray: &str = "\x1B[90m";
+pub(crate) const color_gray: &str = "\x1B[90m";
 
 static mut IS_DEBUG:Option<bool> = Some(false);
 static mut IS_DEBUG_DETAILED:Option<bool> = Some(false);
@@ -32,5 +32,20 @@ impl Terminal {
             let _time = Utils::get_local_time(true);
             println!("{color_gray}[{_time}] {color_gray}[DEBUG] {color_gray}{text}");
         }
+    }
+
+    pub fn done(text:&str) {
+        let _time = Utils::get_local_time(true);
+        println!("{color_gray}[{_time}] {color_green}[DONE] {color_reset}{text}");
+    }
+
+    pub fn log(text:&str) {
+        let _time = Utils::get_local_time(true);
+        println!("{color_gray}[{_time}] {color_reset}[LOG] {text}");
+    }
+
+    pub fn info(text:&str) {
+        let _time = Utils::get_local_time(true);
+        println!("{color_gray}[{_time}] {color_yellow}[LOG] {color_reset}{text}");
     }
 }

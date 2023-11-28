@@ -8,6 +8,6 @@ is_debug_detailed = true
 [database]
 is_debug = false
 host = 'localhost'
-username = 'root'
+username = ''
 password = ''
 name = ''
