@@ -1,0 +1,13 @@
+
+# RustBase config
+
+is_dev = false
+is_debug = true
+is_debug_detailed = true
+
+[database]
+is_debug = false
+host = 'localhost'
+username = 'root'
+password = ''
+name = ''

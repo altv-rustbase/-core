@@ -1,1 +1,6 @@
 /target
+/altv-server/resources/gamemode/client
+/altv-server/resources/gamemode/server
+/altv-server/*
+!/altv-server/resources
+!/altv-server/rustbase.toml

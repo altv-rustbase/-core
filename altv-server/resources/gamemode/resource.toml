@@ -1,0 +1,9 @@
+
+# client
+client-type = 'js'
+client-main = "client/index.js"
+client-files = [ "client/*" ]
+
+# server
+type = 'rs'
+main = 'server/release/resource.dll'

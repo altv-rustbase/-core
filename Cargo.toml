@@ -3,6 +3,9 @@ name = "resource"
 version = "0.1.0"
 edition = "2021"
 
+[build]
+target-dir = "./altv-server/resources/gamemode/server"
+
 [lib]
 crate-type = ['cdylib']
 
