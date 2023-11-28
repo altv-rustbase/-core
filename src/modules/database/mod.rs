@@ -1,6 +1,6 @@
 
 use mongodb::{Client, options::ClientOptions, Collection};
-use crate::utils::terminal::Terminal;
+use crate::modules::utils::terminal::Terminal;
 
 // CODE
 

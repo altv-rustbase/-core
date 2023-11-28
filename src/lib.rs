@@ -1,15 +1,13 @@
-use systems::users::events::UsersEvents;
 use tokio::time::{sleep, Duration};
 
-mod utils;
-use utils::terminal::*;
-use utils::config::*;
+mod modules;
+use modules::utils::terminal::*;
+use modules::utils::config::*;
+use crate::modules::database::DataBase;
 
-mod database;
-use crate::database::DataBase;
-
-mod systems;
-use crate::systems::users::Users;
+mod api;
+use api::users::events::UsersEvents;
+use crate::api::users::Users;
 
 // CODE
 

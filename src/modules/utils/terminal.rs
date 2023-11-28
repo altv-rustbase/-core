@@ -1,5 +1,5 @@
 use inline_colorization::*;
-use crate::utils::Utils;
+use crate::modules::utils::Utils;
 
 // CODE
 
