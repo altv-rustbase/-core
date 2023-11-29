@@ -1,6 +1,7 @@
 pub mod events;
+// pub mod db_model;
 
-use std::collections::HashMap;
+use std::{collections::HashMap, cell::RefCell};
 use altv::BaseObjectPoolFuncs;
 
 mod vitality;
@@ -9,34 +10,33 @@ use self::vitality::Vitality;
 
 // CODE
 
-static mut PLAYERS_LIST:Vec<HashMap<usize, User>> = Vec::new();
+thread_local! {
+    pub static PLAYERS_LIST:RefCell<HashMap<usize, User>> = RefCell::new(HashMap::new());
+}
 
 pub struct Users {}
 impl Users {
-    pub fn _init() {
-        unsafe { PLAYERS_LIST.push(HashMap::new()); }
+    pub async fn _init() {
+        // MAccounts::_init().await;
     }
 
     pub fn add(dynamic_id:String, user:User) {
-        unsafe {
-            let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
-            PLAYERS_LIST[0].insert(_dynamic_id, user);
-        }
+        let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
+        let mut _local_players_list = PLAYERS_LIST.take();
+        _local_players_list.insert(_dynamic_id, user);
     }
 
     pub fn remove(dynamic_id:String) {
-        unsafe {
-            let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
-            PLAYERS_LIST[0].remove(&_dynamic_id);
-        }
+        let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
+        let mut _local_players_list = PLAYERS_LIST.take();
+        _local_players_list.remove(&_dynamic_id);
     }
 
-    pub fn get(dynamic_id:String) -> &'static mut User {
-        unsafe {
-            let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
-            let _return_handle = PLAYERS_LIST[0].get_mut(&_dynamic_id).unwrap();
-            _return_handle
-        }
+    pub fn get(dynamic_id:String) -> User {
+        let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
+        let mut _local_players_list = PLAYERS_LIST.take();
+        let _return_handle = _local_players_list.remove(&_dynamic_id).unwrap();
+        _return_handle
     }
 }
 

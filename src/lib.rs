@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 use tokio::time::{sleep, Duration};
 
 mod modules;
@@ -11,9 +13,13 @@ use crate::api::users::Users;
 
 // CODE
 
+thread_local! {
+    pub static RUSTBASE_CONFIG:RefCell<Option<MainConfig>> = RefCell::new(Some(ServerConfig::_load()));
+}
+
 #[altv::main]
 fn main() -> altv::IntoVoidResult {
-    let _config = ServerConfig::_load();
+    let _config = RUSTBASE_CONFIG.take().unwrap();
     Terminal::set_debug_status(_config.is_debug, _config.is_debug_detailed);
 
     // init server modules
@@ -28,7 +34,7 @@ fn main() -> altv::IntoVoidResult {
 async fn main_async(_config:&MainConfig) {
     sleep(Duration::from_millis(500)).await;
 
-    let _ = DataBase::_load(
+    DataBase::_load(
         &_config.database.host,
         &_config.database.username,
         &_config.database.password,
@@ -37,5 +43,5 @@ async fn main_async(_config:&MainConfig) {
 
     // systems init
     UsersEvents::_register();
-    Users::_init();
+    Users::_init().await;
 }

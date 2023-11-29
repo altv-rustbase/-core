@@ -1,10 +1,14 @@
-
+use std::cell::RefCell;
 use mongodb::{Client, options::ClientOptions, Collection};
 use crate::modules::utils::terminal::Terminal;
 
 // CODE
 
-pub static mut DATABASE_HANDLE:Option<Client> = None;
+pub const DATABASE_NAME:&str = "rustbase";
+
+thread_local! {
+    pub static DATABASE_HANDLE:RefCell<Option<Client>> = RefCell::new(None);
+}
 
 pub struct DataBase {}
 impl DataBase {
@@ -19,24 +23,21 @@ impl DataBase {
             _string_connect = _mongo_str;
         }
 
-        unsafe {
-            let mut _options = ClientOptions::parse_async(_string_connect).await;
-            let _client = Client::with_options(_options.unwrap()).unwrap();
-            DATABASE_HANDLE = Some(_client);
+        let mut _options = ClientOptions::parse_async(_string_connect).await;
+        let _client = Client::with_options(_options.unwrap()).unwrap();
+        DATABASE_HANDLE.set(Some(_client));
 
-            Terminal::done("[DataBase] Connection is successful!");
-        }
+        Terminal::done("[DataBase] Connection is successful!");
     }
 
     pub async fn create_table<T>(name:&str) -> Collection<T> {
         Terminal::debug_detailed(format!("[DataBase] Table `{name}` is init").as_str());
-        unsafe {
-            let _handle = DATABASE_HANDLE.clone().unwrap();
-            let _db = _handle.database("rustbase");
-            _db.create_collection(name, None).await.unwrap();
+        
+        let _handle = DATABASE_HANDLE.take().clone().unwrap();
+        let _db = _handle.database(DATABASE_NAME);
+        _db.create_collection(name, None).await.unwrap();
 
-            let _table = _db.collection(&name);
-            return _table;
-        }
+        let _table = _db.collection(&name);
+        return _table;
     }
 }

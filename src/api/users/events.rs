@@ -1,5 +1,6 @@
 use crate::modules::utils::{terminal::Terminal, Utils};
 use super::{User, Users};
+use altv::Vector3;
 use inline_colorization::*;
 use crate::color_gray;
 
@@ -32,6 +33,21 @@ impl UsersEvents {
 
             let _player_name = event.player.name().unwrap();
             Terminal::info(format!("Player {color_yellow}{_player_name} {color_reset}disconnected from server.").as_str());
+        });
+
+        //? for delete
+        altv::events::on_player_connect(|event| {
+            let _player = &event.player;
+            _player.spawn(
+                altv::hash("MP_M_Freemode_01"),
+                Vector3::new(0, 0, 71)
+            ).unwrap();
+
+            let _veh = altv::Vehicle::new(
+                altv::hash("oracle"),
+                Vector3::new(15, 15, 70),
+                Vector3::default()
+            ).unwrap();
         });
     }
 }

@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 use inline_colorization::*;
 use crate::modules::utils::Utils;
 
@@ -6,29 +8,29 @@ use crate::modules::utils::Utils;
 #[allow(non_upper_case_globals)]
 pub(crate) const color_gray: &str = "\x1B[90m";
 
-static mut IS_DEBUG:Option<bool> = Some(false);
-static mut IS_DEBUG_DETAILED:Option<bool> = Some(false);
+thread_local! {
+    pub static IS_DEBUG:RefCell<bool> = RefCell::new(false);
+    pub static IS_DEBUG_DETAILED:RefCell<bool> = RefCell::new(false);
+}
 
 pub struct Terminal {}
 impl Terminal {
     pub fn set_debug_status(is_debug:bool, is_debug_detailed:bool) {
-        unsafe {
-            IS_DEBUG = Some(is_debug);
-            IS_DEBUG_DETAILED = Some(is_debug_detailed);
-        }
+        IS_DEBUG.set(is_debug);
+        IS_DEBUG_DETAILED.set(is_debug_detailed);
 
         Terminal::debug_detailed("[Terminal] set_debug_status();");
     }
 
     pub fn debug(text:&str) {
-        if unsafe { IS_DEBUG.unwrap() } {
+        if IS_DEBUG.take() {
             let _time = Utils::get_local_time(true);
             println!("{color_gray}[{_time}] {color_cyan}[DEBUG] {color_reset}{text}");
         }
     }
 
     pub fn debug_detailed(text:&str) {
-        if unsafe { IS_DEBUG_DETAILED.unwrap() } {
+        if IS_DEBUG_DETAILED.take() {
             let _time = Utils::get_local_time(true);
             println!("{color_gray}[{_time}] {color_gray}[DEBUG] {color_gray}{text}");
         }
