@@ -9,7 +9,6 @@ use crate::modules::database::DataBase;
 
 mod api;
 use api::users::events::UsersEvents;
-use crate::api::users::Users;
 
 // CODE
 
@@ -43,5 +42,4 @@ async fn main_async(_config:&MainConfig) {
 
     // systems init
     UsersEvents::_register();
-    Users::_init().await;
 }

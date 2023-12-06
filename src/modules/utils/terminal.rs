@@ -48,6 +48,11 @@ impl Terminal {
 
     pub fn info(text:&str) {
         let _time = Utils::get_local_time(true);
-        println!("{color_gray}[{_time}] {color_yellow}[LOG] {color_reset}{text}");
+        println!("{color_gray}[{_time}] {color_yellow}[INFO] {color_reset}{text}");
+    }
+
+    pub fn error(text:&str) {
+        let _time = Utils::get_local_time(true);
+        println!("{color_gray}[{_time}] {color_red}[ERROR] {color_reset}{text}");
     }
 }

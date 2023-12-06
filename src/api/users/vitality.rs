@@ -1,6 +1,7 @@
 
 // CODE
 
+#[derive(Clone)]
 pub struct Vitality {
     value:usize,
     max:usize,
@@ -33,4 +34,9 @@ impl Vitality {
     }
 
     // OTHERS
+
+    pub fn add(&mut self, value:usize) {
+        let _new_value = self.value + value;
+        self.set(_new_value);
+    }
 }

@@ -5,7 +5,7 @@ use std::{collections::HashMap, cell::RefCell};
 use altv::BaseObjectPoolFuncs;
 
 mod vitality;
-use crate::modules::utils::Utils;
+use crate::modules::utils::{Utils, terminal::Terminal};
 use self::vitality::Vitality;
 
 // CODE
@@ -16,30 +16,94 @@ thread_local! {
 
 pub struct Users {}
 impl Users {
-    pub async fn _init() {
-        // MAccounts::_init().await;
+    pub fn has(dynamic_id:&String) -> bool {
+        let _local_list = PLAYERS_LIST.take();
+        let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
+
+        if let Some(_user) = _local_list.get(&_dynamic_id) { true }
+        else { false }
     }
 
-    pub fn add(dynamic_id:String, user:User) {
+    pub fn add(dynamic_id:&String, user:User) {
+        Terminal::debug_detailed(format!("[Users List] add({});", dynamic_id).as_str());
         let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
-        let mut _local_players_list = PLAYERS_LIST.take();
-        _local_players_list.insert(_dynamic_id, user);
+
+        if !Users::has(dynamic_id) {
+            PLAYERS_LIST.with(|_list| {
+                let mut _local_list = _list.borrow_mut();
+                _local_list.insert(_dynamic_id, user);
+            });
+        } else { Terminal::error(format!("[Users List] It is impossible to add a player with ID {} to the list because he already exists", dynamic_id).as_str()); }
     }
 
-    pub fn remove(dynamic_id:String) {
+    pub fn remove(dynamic_id:&String) {
+        Terminal::debug_detailed(format!("[Users List] remove({});", dynamic_id).as_str());
         let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
-        let mut _local_players_list = PLAYERS_LIST.take();
-        _local_players_list.remove(&_dynamic_id);
+
+        if Users::has(dynamic_id) {
+            PLAYERS_LIST.with(|_list| {
+                let mut _local_list = _list.borrow_mut();
+                _local_list.remove(&_dynamic_id);
+            });
+        } else { Terminal::error(format!("[Users List] Cannot delete player with ID {} because he is not in the list", dynamic_id).as_str()); }
     }
 
-    pub fn get(dynamic_id:String) -> User {
-        let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
-        let mut _local_players_list = PLAYERS_LIST.take();
-        let _return_handle = _local_players_list.remove(&_dynamic_id).unwrap();
-        _return_handle
-    }
+    // pub fn get(dynamic_id:&String) -> Result<User, bool> {
+    //     Terminal::debug_detailed(format!("[Users List] get({});", dynamic_id).as_str());
+    //     let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
+
+    //     PLAYERS_LIST.with(|_list| {
+    //         let mut _local_list = _list.borrow_mut();
+            
+    //         if let Some(_user) = _local_list.remove(&_dynamic_id) {
+    //             Ok(_user)
+    //         } else { Err(false) }
+    //     })
+    // }
 }
 
+// impl Users {
+//     pub async fn _init() {
+//         // MAccounts::_init().await;
+//     }
+
+//     fn has(dynamic_id:usize) -> bool {
+//         if let Some(_user) = PLAYERS_LIST.take().get(&dynamic_id) { true }
+//         else { false }
+//     }
+
+//     pub fn add(dynamic_id:String, user:User) {
+//         let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
+
+//         if Users::has(_dynamic_id) == false {
+//             Terminal::debug_detailed(format!("Player with ID {} added to users list", _dynamic_id).as_str());
+//             PLAYERS_LIST.take().insert(_dynamic_id, user);
+//         } else { Terminal::error(format!("Cannot add player with ID {} because he is already on the users list", dynamic_id).as_str()); }
+//     }
+
+//     pub fn remove(dynamic_id:String) {
+//         let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
+        
+//         if Users::has(_dynamic_id) {
+//             Terminal::debug_detailed(format!("Player with ID {} removed from users list", _dynamic_id).as_str());
+//             PLAYERS_LIST.take().remove(&_dynamic_id);
+//         } else { Terminal::error(format!("Player with ID {} not found in users list", _dynamic_id).as_str()); }
+//     }
+
+//     // pub fn get(dynamic_id:String) -> Result<User, String> {
+//     //     let _dynamic_id = dynamic_id.to_string().parse::<usize>().unwrap();
+        
+//     //     if Users::has(_dynamic_id) {
+//     //         let _local_list = PLAYERS_LIST.take();
+//     //         let _user = _local_list.get(&_dynamic_id).clone().unwrap();
+//     //         Ok(_user.clone())
+//     //     } else {
+//     //         Err(format!("Player with ID {} not found in users list", dynamic_id))
+//     //     }
+//     // }
+// }
+
+#[derive(Clone)]
 pub struct User {
     pub dynamic_id:String,
     pub health:Vitality,
@@ -53,7 +117,7 @@ impl User {
         User {
             dynamic_id: dynamic_id.to_string(),
             health: Vitality::new(100, 0, 100),
-            armour: Vitality::new(0, 0, 100)
+            armour: Vitality::new(50, 0, 100)
         }
     }
 
